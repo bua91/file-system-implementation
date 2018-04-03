@@ -244,9 +244,7 @@ int request_to_server_send(int sock_fd)
 	}
 
 }
-/*
- * Lamports mutual exclusion implementation. REQUEST send to other clients
- */
+
 void client_send_request(int sock_fd)
 {
 	struct timestamp *temp = (struct timestamp*) malloc(sizeof(struct timestamp));
