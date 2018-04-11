@@ -274,6 +274,7 @@ int server()
 
           //If the connection is coming from file_server, then parse recv buffer and store the metadata info
 					if (file_server_fd == 1){
+
 						char *token;
 						int m =0;
             char temp_hostname[30];
@@ -327,6 +328,7 @@ int server()
   						}
               //get chunk id from the offset.
               cunk_id = get_chunk_id_from_offset(temp_filename,temp_offset);
+	      printf("===============================================================%d", cunk_id);
               if (cunk_id != 0) {
                 get_host_name(temp_filename,cunk_id);
 
@@ -358,6 +360,7 @@ int server()
   						}
               strcpy(temp_offset, "max");
               cunk_id = get_chunk_id_from_offset(temp_filename,temp_offset);
+	      printf("===============================================================%d", cunk_id);
               if (cunk_id != 0) {
                 get_host_name(temp_filename,cunk_id);
                 sprintf(temp_chunk_id, "%d", cunk_id);

@@ -210,6 +210,22 @@ int server()
             fclose(fp);
           }
 
+	  else if (!strcmp(token, "create")){
+		while(token != NULL){
+		if (m ==1){
+			strcpy(temp_filename, token);
+		}
+		m++;
+		token = strtok(NULL, " ");
+		}
+	  FILE *fp;
+	  strcpy(filnm, temp_filename);
+	  strcat(filnm, "1");
+	  fp = fopen(filnm, "w+");
+	  fclose(fp);
+	  insert_into_metadata(temp_filename, "1");
+	 }
+
 					/*delete data from request queue
 					if (!delete_from_request_queue(temp_hostname, temp_timestamp)){
 						fprintf(stderr, "mServersh(SERVER CODE): error in inserting remote request to queue!!\n");
@@ -288,7 +304,7 @@ int peer_connect(char *ip_address)
 		sleep(5);
 		//construct message to send.
 		while (current != NULL){
-			strcpy(send_buffer, temp_hostname);
+			strcat(send_buffer, temp_hostname);
 			strcat(send_buffer, " ");
 			strcat(send_buffer, current->file_name);
 			strcat(send_buffer, " ");

@@ -195,6 +195,7 @@ int append_operation(char *filename){
   strcpy(send_buffer, "append");
   strcat(send_buffer, " ");
   strcat(send_buffer, filename);
+  printf("%d\n",mserver_fd );
   if (send(temp_fd, send_buffer, strlen(send_buffer), 0) < 0){
 		fprintf(stderr,"clientsh: error in sending append request to mserver!!\n");
 	}
@@ -238,7 +239,7 @@ int append_operation(char *filename){
  * Create Functionality
  */
 int create_operation(char *filename){
-  int temp_fd = mserver_fd;
+  int temp_fd = server_fds[0];
   char send_buffer[2048] = {0};
   char recv_buffer[2048] = {0};
 
@@ -247,7 +248,7 @@ int create_operation(char *filename){
   strcat(send_buffer, " ");
   strcat(send_buffer, filename);
   if (send(temp_fd, send_buffer, strlen(send_buffer), 0) < 0){
-		fprintf(stderr,"clientsh: error in sending create request to mserver!!\n");
+		fprintf(stderr,"clientsh: error in sending create request to server!!\n");
 	}
 	return 1;
 }
