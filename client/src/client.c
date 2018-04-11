@@ -174,7 +174,7 @@ int read_operation(char *filename, char *offset){
          fprintf(stderr, "mServersh(SERVER CODE): Error in reading reply from mserver!!\n");
   }
   printf("The string read is:\n%s", recv_buffer);
-
+	return 1;
 }
 
 
@@ -231,7 +231,7 @@ int append_operation(char *filename){
   if (send(temp_fd, send_buffer, strlen(send_buffer), 0) < 0){
 		fprintf(stderr,"clientsh: error in sending append request to mserver!!\n");
 	}
-
+	return 1;
 }
 
 /*
@@ -249,4 +249,5 @@ int create_operation(char *filename){
   if (send(temp_fd, send_buffer, strlen(send_buffer), 0) < 0){
 		fprintf(stderr,"clientsh: error in sending create request to mserver!!\n");
 	}
+	return 1;
 }

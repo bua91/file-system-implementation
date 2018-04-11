@@ -169,13 +169,13 @@
  		return (client_connect(args[1]));
  	}
   else if (strcmp (args[0], "read") == 0){
-    return read_operation(args[1], args[2]);
+    return (read_operation(args[1], args[2]));
   }
   else if (strcmp (args[0], "append") == 0){
-    return append_operation(args[1]);
+    return (append_operation(args[1]));
   }
   else if (strcmp (args[0], "create") == 0){
-    return create_operation(args[1]);
+    return (create_operation(args[1]));
   }
  	/*else if (strcmp (args[0], "total") == 0){
  		printf("total connections = %d\n", no_of_conn);
@@ -222,17 +222,6 @@
   		server_fds[i] = 0;
     }
     mserver_fd = 0;
- /*	int i;
- 	max_clients = 10;
-
- 	client_fd_index = 0;
-
- 		client_fds[i] = 0;
- 	}
- 	//Inotialize all client socket fds to 0.
- 	for (i = 0; i < max_clients; i++){
- 		conn_fds[i] = 0;
- 	}*/
  	return 1;
  }
 

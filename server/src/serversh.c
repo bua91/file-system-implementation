@@ -234,6 +234,7 @@ int initialize()
 	for (i =0; i<3; i++){
 		client_fds[i] = 0;
 	}
+	mserver_fd =0;
 	return 1;
 }
 

@@ -22,13 +22,12 @@
 int insert_into_metadata(char *filenm, char *chunkid)
 {
 	struct metadata *temp = (struct metadata*) malloc(sizeof(struct metadata));
-	int cunk_id = atoi(chunkid);
+	/*int cunk_id = atoi(chunkid);
 	if (cunk_id == 0){
 		return 0;
-	}
-  //if metadata not in metadata table, then insert
+	}*/
   strcpy(temp->file_name, filenm);
-	temp->chunk_id = cunk_id;
+	strcpy(temp->chunk_id, chunkid);
 	temp->next = head;
 	head = temp;
 
@@ -225,9 +224,84 @@ int server()
 }
 
 /*
- *  * Client functionality part of client node
- *   */
+ * Client functionality part of server node
+ */
 int peer_connect(char *ip_address)
 {
-	//to be written
+	int sock_fd;
+	struct sockaddr_in server_addr;
+	char send_buffer[2048] = {0};
+	char recv_buffer[2048] = {0};
+	//char sen_buf[30] = {0};
+	//char rec_buf[30] = {0};
+	int i, m, rd;
+	int random = 0;
+	int check = 0;
+	int release_check = 0;
+	char temp_hostname[30];
+	gethostname(temp_hostname,30);
+	FILE *fp;
+	strcpy(send_buffer, "server");
+	//strcpy(sen_buf, "hostname");
+
+	//start with a default file
+	fp = fopen("default1", "w+");
+	fclose(fp);
+
+	insert_into_metadata("default", "1");
+
+	if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+		fprintf(stderr, "serversh(CLIENT PART): Error in socket creation!!\n");
+		return 0;
+	}
+	bzero(&server_addr, sizeof(server_addr));
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(9000);
+
+	if (inet_pton(AF_INET, ip_address, &server_addr.sin_addr) <= 0){
+		fprintf(stderr, "serversh(CLIENT PART): Error in IP address!!\n");
+		return 0;
+	}
+
+	if (connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0){
+		fprintf(stderr, "serversh(CLIENT PART): Error in socket connect!!\n");
+		return 0;
+	}
+
+	//send hello to the new mserver
+	if (send(sock_fd, send_buffer, strlen(send_buffer), 0) < 0){
+		fprintf(stderr,"serversh: error in sending hello to other client!!\n");
+	}
+
+	//read the greeting reply from the mserver
+	rd = read(sock_fd, recv_buffer, 2048);
+
+	if ((strncmp(recv_buffer, "mserver", 7) == 0)){
+		mserver_fd = sock_fd;
+	}
+	memset(recv_buffer, 0, sizeof(recv_buffer));
+	memset(send_buffer, 0, sizeof(send_buffer));
+
+	while (1){
+		//sleep for 5 seconds
+		struct metadata *current = head;
+		sleep(5);
+		//construct message to send.
+		while (current != NULL){
+			strcpy(send_buffer, temp_hostname);
+			strcat(send_buffer, " ");
+			strcat(send_buffer, current->file_name);
+			strcat(send_buffer, " ");
+			strcat(send_buffer, current->chunk_id);
+			strcat(send_buffer, " ");
+			current = current->next;
+		}
+		if (send(sock_fd, send_buffer, strlen(send_buffer), 0) < 0){
+			fprintf(stderr,"serversh: error in sending metadata to mserver!!\n");
+		}
+		//infinite loop to let the client socket open untill the program ends
+	}
+
+	close(sock_fd);
+	return 1;
 }
