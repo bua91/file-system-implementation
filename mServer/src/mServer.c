@@ -40,7 +40,7 @@ int insert_into_metadata(char *hst_name, char *filenm, char *chunkid)
 
   //if metadata not in metadata table, then insert
 	strcpy(temp->host_name, hst_name);
-  strcpy(temp->file_name, filenm);
+ 	 strcpy(temp->file_name, filenm);
 	temp->chunk_id = cunk_id;
 	temp->next = head;
 	head = temp;
@@ -137,27 +137,26 @@ void get_host_name(char *filename, int chunkid)
       current = current->next;
   }
 }
-
 /*
  * server part of the client
  */
 int server()
 {
-  int master_sock_fd, new_conn_fd, fd;
+  	int master_sock_fd, new_conn_fd, fd;
 	struct sockaddr_in server_addr, cli_addr;
 	socklen_t cli_len;
 	int i = 0;
-  int j;
+ 	int j;
 	int max_fd, activity;
 	char send_buffer[2048] = {0};
 	char recv_buffer[2048] = {0};
-  char rec_buf[30] = {0};
-  char sen_buf[30] = {0};
+  	char rec_buf[30] = {0};
+  	char sen_buf[30] = {0};
 
-  int file_server_fd = 0;
+  	int file_server_fd = 0;
 
 	//Open a socket connection
-  if ((master_sock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+  	if ((master_sock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
 		fprintf(stderr, "mServersh(SERVER CODE): Error in socket creation!!\n");
 		return 0;
 	}
@@ -219,14 +218,14 @@ int server()
 
 			if (!strcmp(recv_buffer, "server")){
 				//store the connection fd in server_fds
-        server_fds[server_fd_index] = new_conn_fd;
-        server_fd_index++;
+        			server_fds[server_fd_index] = new_conn_fd;
+        			server_fd_index++;
 			}
-      else if (!strcmp(recv_buffer, "client")){
-        //store the connection fd in client_fds
-        client_fds[client_fd_index] = new_conn_fd;
-        client_fd_index++;
-      }
+      			else if (!strcmp(recv_buffer, "client")){
+        			//store the connection fd in client_fds
+        			client_fds[client_fd_index] = new_conn_fd;
+        			client_fd_index++;
+      			}
 
       //send a reply saying mserver
       strcpy(send_buffer, "mserver");

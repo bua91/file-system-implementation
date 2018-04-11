@@ -213,7 +213,8 @@
   */
  int initialize()
  {
- 	 head = NULL;
+ 	int i;
+ 	head = NULL;
    num = 0;
    server_fd_index = 0;
    //Initialize all the server_fds and client_fds to 0.

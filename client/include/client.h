@@ -10,6 +10,7 @@
 struct node_info{
   char hostname[30];
   int fd;
+  struct node_info *next;
 };
 
 struct node_info *head;
@@ -25,5 +26,5 @@ int peer_connect( char *ip_address);
 void insert_node_info(char *hstnm, int fd);
 int read_operation(char *filename, char *offset);
 int append_operation(char *filename);
-int append_operation(char *filename);
+int create_operation(char *filename);
 int get_file_server_fd(char *hstnm);

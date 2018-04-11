@@ -195,8 +195,8 @@ int client_connect( char *ip_addr)
  if (err != 0){
    fprintf(stderr,"serversh: mserver client thread creation error!!\n");
  }
- ptid[num] = local_ptid;
- num++;
+ //ptid[num] = local_ptid;
+ //num++;
  return 1;
 }
 
@@ -207,7 +207,7 @@ int show_hosted_files()
 {
 	//Fetching metadata information
 	struct metadata *current = head;
-	printf("METADATA TABLE :\n=======================\n\n")
+	printf("METADATA TABLE :\n=======================\n\n");
 	printf("%20s%10s\n", "File name", "Chunk id");
 	while (current != NULL)
   {

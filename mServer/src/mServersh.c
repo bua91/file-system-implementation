@@ -179,7 +179,7 @@ int show_hosted_files()
 {
 	//Fetching metadata information
 	struct metadata *current = head;
-	printf("METADATA TABLE :\n=======================\n\n")
+	printf("METADATA TABLE :\n=======================\n\n");
 	printf("%20s%20s%10s\n", "File server", "File name", "Chunk id");
 	while (current != NULL)
   {

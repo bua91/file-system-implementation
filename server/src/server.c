@@ -223,3 +223,11 @@ int server()
 	}
 	return 1;
 }
+
+/*
+ *  * Client functionality part of client node
+ *   */
+int peer_connect(char *ip_address)
+{
+	//to be written
+}

@@ -24,6 +24,7 @@
 
 
  //Function prototypes
+ int peer_connect(char *ip_address);
  int insert_into_metadata(char *filenm, char *chunkid);
  int server();
  int show_hosted_files();

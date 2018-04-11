@@ -237,7 +237,7 @@ int append_operation(char *filename){
 /*
  * Create Functionality
  */
-int append_operation(char *filename){
+int create_operation(char *filename){
   int temp_fd = mserver_fd;
   char send_buffer[2048] = {0};
   char recv_buffer[2048] = {0};
