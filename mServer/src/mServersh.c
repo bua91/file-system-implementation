@@ -1,5 +1,5 @@
 /*
- * FILE NAME: clientsh.c
+ * FILE NAME: mServersh.c
  * OWNER: ARUNABHA CHAKRABORTY
  */
 #include <stdio.h>
@@ -8,7 +8,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <pthread.h>
-#include "client.h"
+#include "mServer.h"
 
 #define TOK_BUFF_SIZE 128
 #define TOK_DELIMITER " \t\r\n\a"
@@ -16,53 +16,51 @@
 /*
  *Function decleration for built in functions
  */
-int clientsh_cd(char **args);
-int clientsh_help(char **args);
-int clientsh_exit(char **args);
+int mServersh_cd(char **args);
+int mServersh_help(char **args);
+int mServersh_exit(char **args);
 
 /*
  * Built in function implementations.
  * ************************************************************
  * ************************************************************
- * NAME: clientsh_help
+ * NAME: mServersh_help
  * PURPOSE: Display help string for built in cmds.
  */
-int clientsh_help(char **args)
+int mServersh_help(char **args)
 {
-	printf("CLIENTSH SUPPORTED BUILT IN COMANDS\n");
+	printf("mSERVERSH SUPPORTED BUILT IN COMANDS\n");
 	printf("help                                   Displayes the helpline\n");
 	printf("cd                                     Changes directory\n");
-	printf("show hosted-files                      To show the list of files hosted by the servers\n");
-	printf("peer <IP_ADDRESS> <PORT>               To peer with clients as well as server. Please use port 9000 for peering\n");
-	printf("total connections                      show total number of connections\n");
-//	printf("start                                  To start the sending of information to the server files considering lamport mutual exclusion\n");
-	printf("exit                                   Exit clientsh\n");
+	printf("show hosted-files                      Shows the list of files and chunks hosted by the servers\n");
+	//printf("total connections                      show total number of connections\n");
+	printf("exit                                   Exit mServersh\n");
 	return 1;
 }
 
 /*
- * NAME: clientsh_cd
+ * NAME: mServersh_cd
  * PURPOSE: change directory
  */
-int clientsh_cd(char **args)
+int mServersh_cd(char **args)
 {
 	if (args[1] == NULL){
-		fprintf(stderr, "clientsh: Expected argument to cd!!\n");
+		fprintf(stderr, "mServersh: Expected argument to cd!!\n");
 	}
 	else{
 		if(chdir(args[1]) !=0){
-			perror("clientsh");
+			perror("mServersh");
 		}
 	}
 	return 1;
 }
 
 /*
- * NAME: clientsh_exit
- * PURPOSE: To exit from clientsh shell.
+ * NAME: mServersh_exit
+ * PURPOSE: To exit from mServersh shell.
  * WARNING: All configurations will be gone.
  */
-int clientsh_exit(char **args)
+int mServersh_exit(char **args)
 {
 	return 0;
 }
@@ -91,7 +89,7 @@ char ** parse_line(char *line)
 	char *token;
 	char **cmd_arguments = malloc(buff_size * sizeof(char*));
 	if(!cmd_arguments){
-		fprintf(stderr, "clientsh: allocation error!!\n");
+		fprintf(stderr, "mServersh: allocation error!!\n");
 		exit(EXIT_FAILURE);
 	}
 	token = strtok(line, TOK_DELIMITER);
@@ -103,7 +101,7 @@ char ** parse_line(char *line)
 			buff_size += TOK_BUFF_SIZE;
 			cmd_arguments = realloc(cmd_arguments, buff_size*sizeof(char*));
 			if (!cmd_arguments){
-			 	fprintf(stderr, "clientsh: allocation error!!\n");
+			 	fprintf(stderr, "mServersh: allocation error!!\n");
 			 	exit(EXIT_FAILURE);
 			}
 		}
@@ -127,12 +125,12 @@ int cmd_launch(char **args)
   	pid = fork();
   	if (pid < 0){
 		 // Error forking
-		 perror("clientsh");
+		 perror("mServersh");
   	}
   	else if (pid == 0){
   		// Child process
     		if (execvp(args[0], args) == -1){
-			perror("clientsh");
+			perror("mServersh");
 		}
 		exit(EXIT_FAILURE);
   	}
@@ -145,34 +143,10 @@ int cmd_launch(char **args)
   	return 1;
 }
 
-#if 0
-/*
- * Thread handler for send
- */
-void * start_send(void * arg)
-{
-	client_send();
-}
-
-/*
- * Start the sending process
- */
-int start()
-{
-	pthread_t stid;
-	int err;
-	err = pthread_create(&stid,NULL,start_send,NULL);
-	if (err != 0){
-		fprintf(stderr,"clientsh: client send thread creation error!!\n");
-	}
-	return 1
-}
-#endif
-
 /*
  * NAME: cmd_execute
  * RETURN_TYPE: integer
- * PURPOSE: To execute the clientsh built in cmds and other native linux shell cmds.
+ * PURPOSE: To execute the mServersh built in cmds and other native linux shell cmds.
  */
 int cmd_execute (char **args)
 {
@@ -180,27 +154,21 @@ int cmd_execute (char **args)
 	if (args[0] == NULL)
 		return 1;
 	if (strcmp (args[0],"help") == 0){
-		return (clientsh_help(args));
+		return (mServersh_help(args));
 	}
 	else if (strcmp (args[0], "cd") == 0){
-		return (clientsh_cd(args));
+		return (mServersh_cd(args));
 	}
 	else if (strcmp (args[0], "exit") == 0){
-		return (clientsh_exit(args));
+		return (mServersh_exit(args));
 	}
-	else if (strcmp (args[0], "peer") == 0){
-		return (cli_server_connect(args[1]));
-	}
-	/*else if (strcmp (args[0], "start")){
-		return (start());
-	}*/
 	else if (strcmp (args[0], "show") == 0){
 		return (show_hosted_files());
 	}
-	else if (strcmp (args[0], "total") == 0){
+	/*else if (strcmp (args[0], "total") == 0){
 		printf("total connections = %d\n", no_of_conn);
 		return 1;
-	}
+	}*/
 	return (cmd_launch(args));
 }
 
@@ -209,31 +177,15 @@ int cmd_execute (char **args)
  */
 int show_hosted_files()
 {
-	printf("\ttest1.txt\n\ttest2.txt\n");
-	return 1;
-}
-
-/*
- * Thread handler for peer connection
- */
-void * peer_conn(void * arg)
-{
-	peer_connect((char *)arg);
-}
-
-/*
- * Function to start a new thread for handling the peer client connection
- */
-int cli_server_connect( char *ip_addr)
-{
-	pthread_t local_ptid;
-	int err;
-	err = pthread_create(&local_ptid,NULL,peer_conn,(void *)ip_addr );
-	if (err != 0){
-		fprintf(stderr,"clientsh: client thread creation error!!\n");
-	}
-	ptid[num] = local_ptid;
-	num++;
+	//Fetching metadata information
+	struct metadata *current = head;
+	printf("METADATA TABLE :\n=======================\n\n")
+	printf("%20s%20s%10s\n", "File server", "File name", "Chunk id");
+	while (current != NULL)
+  {
+      printf("%20s%20s%10d\n", current->host_name, current->file_name, current->chunk_id);
+      current = current->next;
+  }
 	return 1;
 }
 
@@ -244,17 +196,18 @@ int initialize()
 {
 	int i;
 	head = NULL;
-	local_clock = 1;
-	for (i =0; i<3; i++){
-		server_fds[i] = 0;
-	}
-	num = 1;
 	max_clients = 10;
-	no_of_conn = 0;
-	peer_cli_replies = 0;
-	release_sent = 1;
-	local_clock_send_timer = 0;
-	file_no = 1;
+	server_fd_index = 0;
+	client_fd_index = 0;
+	//Initialize all the server_fds and client_fds to 0.
+	for (i =0; i<5; i++){
+		server_fds[i] = 0;
+		client_fds[i] = 0;
+	}
+	//Inotialize all client socket fds to 0.
+	for (i = 0; i < max_clients; i++){
+		conn_fds[i] = 0;
+	}
 	return 1;
 }
 
@@ -273,27 +226,27 @@ void *local_server(void * arg)
  */
 int main(int argc, char **argv)
 {
-        char *cmd_str;
-        char **cmd_args;
-        int status;
+  char *cmd_str;
+  char **cmd_args;
+	int status;
 	pthread_t tid;
 	int err;
 	initialize();
 	printf("=======================================================\n\n");
-	printf("                  CLIENTSH                             \n\n");
+	printf("                  mServersh                             \n\n");
 	printf("       (CREATOR: ARUNABHA CHAKRABORTY                  \n\n");
 	printf("=======================================================\n\n");
-	/* Run local server in a new thread upon starting clientsh*/
+	/* Run local server in a new thread upon starting mServersh*/
 	err = pthread_create(&tid, NULL, local_server, NULL);
 	if (err != 0 ){
-		fprintf(stderr, "clientsh: server thread creation error!!\n");
+		fprintf(stderr, "mServersh: server thread creation error!!\n");
 	}
 	/* Start the shell and execute comands*/
-        do{
-                printf("CLIENTSH>>");
-                cmd_str = read_line();
-                cmd_args = parse_line(cmd_str);
-                status = cmd_execute(cmd_args);
-        }while(status);
-        return EXIT_SUCCESS;
+  do{
+          printf("mServersh>>");
+          cmd_str = read_line();
+          cmd_args = parse_line(cmd_str);
+          status = cmd_execute(cmd_args);
+  }while(status);
+  return EXIT_SUCCESS;
 }
